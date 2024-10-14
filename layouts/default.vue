@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const { signIn, session } = useAuth()
+
 const route = useRoute()
 
 const links = [
@@ -22,7 +24,7 @@ const links = [
 </script>
 <template>
   <section class="flex w-full min-h-screen">
-    <aside class="bg-neutral-100 border-r w-[250px] px-3 py-2">
+    <aside class=" border-r w-[250px] px-3 py-2">
       <UPopover overlay class="mb-4">
         <UButton
           color="white"
@@ -30,10 +32,10 @@ const links = [
           trailing-icon="i-heroicons:chevron-up-down-20-solid"
         >
           <span class="flex gap-2 items-center">
-            <NuxtImg src="/logo.jpeg" class="size-9 rounded-lg" />
+            <NuxtImg :src="session?.user?.image || '/logo.jpeg'" class="size-9 rounded-lg" />
             <div class="text-start">
-              <h5 class="font-bold">Svyatoslav</h5>
-              <p class="text-xs text-neutral-600">test@gmail.com</p>
+              <h5 class="font-bold">{{ session?.user?.name }}</h5>
+              <p class="text-xs text-neutral-600 truncate w-4/5">{{ session?.user?.email }}</p>
             </div>
           </span>
         </UButton>
@@ -52,15 +54,15 @@ const links = [
         placeholder="Search..."
       />
       <div>
-        <div v-for="(link, index) in links" :key="index">
+        <div v-for="(link, index) in links" class="text-neutral-600" :key="index">
           <h6 class="font-semibold mt-4">{{ link.heading }}</h6>
           <ul class="list-none p-0">
             <li v-for="(item, i) in link.items" :key="i">
               <NuxtLink
                 :to="item.path"
-                class="flex transition-all items-center px-4 h-8 hover:bg-neutral-200/50 cursor-pointer rounded-lg"
+                class="flex transition-all items-center px-4 h-8 hover:bg-neutral-100 hover:text-black cursor-pointer rounded-lg"
                 :class="{
-                  'bg-red-100 hover:bg-red-100/70 text-red-500': route.path === item.path // Активная ссылка
+                  'bg-red-100 text-red-600': route.path === item.path
                 }"
               >
                 <UIcon :name="item.icon" class="mr-2" />

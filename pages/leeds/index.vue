@@ -1,5 +1,18 @@
 <script setup lang="ts">
-import { format } from "date-fns"
+
+interface ILeed {
+  id: number;
+    subject: string;
+    leads: {
+        name: string;
+        image: string;
+    };
+    activities: string;
+    email: string;
+    completed: boolean;
+}
+
+import { format } from "date-fns";
 
 useSeoMeta({
   title: "Leeds",
@@ -10,35 +23,35 @@ const columns = [
   {
     key: "subject",
     label: "Subject",
-    class: "bg-neutral-100"
+    class: "bg-neutral-50"
   },
   {
     key: "leads",
     label: "Name of leads",
-    class: "bg-neutral-100"
+    class: "bg-neutral-50"
   },
   {
     key: "activities",
     label: "Activities",
-    class: "bg-neutral-100"
+    class: "bg-neutral-50"
   },
   {
     key: "email",
     label: "Email",
-    class: "bg-neutral-100"
+    class: "bg-neutral-50"
   },
   {
     key: "completed",
     label: "Status",
-    class: "bg-neutral-100"
+    class: "bg-neutral-50"
   },
   {
     key: "actions",
-    class: "bg-neutral-100"
+    class: "bg-neutral-50"
   }
 ]
 
-const people = ref([
+const people = ref<ILeed[]>([
   {
     id: 1,
     subject: "Colaboration work for project",
@@ -107,7 +120,7 @@ const people = ref([
   }
 ])
 
-const items = (row) => [
+const items = (row: any) => [
   [
     {
       label: "Edit",
@@ -140,8 +153,7 @@ const items = (row) => [
     }
   ]
 ]
-const selected = ref([people[1]])
-const selectedPerson = ref({})
+const selectedPerson = ref<ILeed | null>()
 const isOpen = ref(false)
 
 const tabs = [
@@ -159,7 +171,7 @@ const tabs = [
 
 const selectedTab = ref("list")
 
-const openModal = (person) => {
+const openModal = (person: ILeed) => {
   selectedPerson.value = person
   console.log(selectedPerson.value)
   isOpen.value = true
@@ -171,7 +183,6 @@ function onChange(index: number) {
   selectedTab.value = item.key
 }
 
-const { signIn, signOut, session, status, cookies } = useAuth()
 </script>
 
 <template>
@@ -179,19 +190,15 @@ const { signIn, signOut, session, status, cookies } = useAuth()
     <section class="flex px-4 w-full justify-between items-center">
       <UTabs
         :items="tabs"
-        default-index="0"
+        :default-index="0"
         @change="onChange"
         :ui="{ list: { width: 'w-[200px]' } }"
       />
-      <UButton @click="signIn(`github`)">Create new subject</UButton>
-      <div>
-        <NuxtImg :src="session?.user?.image" class="w-12 h-12 rounded-full" />
-        <p>{{ session?.user?.email }}</p>
-      </div>
+      <UButton >Create new subject</UButton>
     </section>
-    <section v-if="selectedTab === 'list'">
+    <section v-if="selectedTab === 'list'" class="mt-4 px-4">
       <!-- Таб с таблицей UTable -->
-      <UTable :rows="people" :columns="columns" class="w-full border-y">
+      <UTable :rows="people" :columns="columns" class="w-full rounded-lg border-2" :ui="{ tbody: 'divide-y-2',tr: {base: 'hover:bg-gray-50 transition-all'} }">
         <template #subject-data="{ row }">
           <span class="font-semibold tracking-wide text-sm text-black">{{ row.subject }}</span>
         </template>
@@ -230,7 +237,7 @@ const { signIn, signOut, session, status, cookies } = useAuth()
         <UCard
           v-for="pp in people"
           :key="pp.id"
-          class="relative text-sm hover:-translate-y-2 transition-all"
+          class="relative text-sm hover:-translate-y-2 hover:bg-gray-50 transition-all"
         >
           <UButton
             color="gray"

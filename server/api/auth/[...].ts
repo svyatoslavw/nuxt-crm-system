@@ -1,34 +1,48 @@
+import { NuxtAuthHandler } from "#auth"
 import GithubProvider from "@auth/core/providers/github"
 import type { AuthConfig } from "@auth/core/types"
-import { NuxtAuthHandler } from "#auth"
+import { PrismaAdapter } from "@auth/prisma-adapter"
 import prisma from "~/lib/prisma"
 
 const runtimeConfig = useRuntimeConfig()
 
 export const authOptions: AuthConfig = {
   secret: runtimeConfig.authJs.secret,
+  adapter: PrismaAdapter(prisma) as any,
   trustHost: true,
+  session: { strategy: "jwt", maxAge: 1209600 },
   providers: [
     GithubProvider({
       clientId: runtimeConfig.github.clientId,
-      clientSecret: runtimeConfig.github.clientSecret
+      clientSecret: runtimeConfig.github.clientSecret,
+      profile(profile) {
+        return {
+          id: profile.id.toString(),
+          name: profile.login,
+          email: profile.email,
+          image: profile.avatar_url
+        }
+      },
+      allowDangerousEmailAccountLinking: true
     })
   ],
   callbacks: {
-    signIn: async ({ user }) => {
+    signIn: ({ user }) => {
+      console.log("signIn", user)
+
       try {
-        if (!user.email) {
+        if (!user.email || !user) {
           return false
         }
 
-        const existingUser = await prisma.user.findUnique({
+        const existingUser = prisma.user.findUnique({
           where: { email: user.email }
         })
 
         if (!existingUser) {
-          const newUser = await prisma.user.create({
+          const newUser = prisma.user.create({
             data: {
-              email: user.email,
+              email: user.email || `${user.id}@example.com`,
               name: user.name || "User #" + user.id,
               image: user.image ?? "",
               password: null

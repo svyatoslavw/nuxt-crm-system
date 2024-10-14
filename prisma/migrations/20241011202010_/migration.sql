@@ -13,7 +13,7 @@ CREATE TABLE "users" (
 );
 
 -- CreateTable
-CREATE TABLE "accounts" (
+CREATE TABLE "Account" (
     "userId" TEXT NOT NULL,
     "type" TEXT NOT NULL,
     "provider" TEXT NOT NULL,
@@ -28,11 +28,11 @@ CREATE TABLE "accounts" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "accounts_pkey" PRIMARY KEY ("provider","providerAccountId")
+    CONSTRAINT "Account_pkey" PRIMARY KEY ("provider","providerAccountId")
 );
 
 -- CreateTable
-CREATE TABLE "sessions" (
+CREATE TABLE "Session" (
     "sessionToken" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
@@ -41,22 +41,22 @@ CREATE TABLE "sessions" (
 );
 
 -- CreateTable
-CREATE TABLE "verificationtokens" (
+CREATE TABLE "VerificationToken" (
     "identifier" TEXT NOT NULL,
     "token" TEXT NOT NULL,
     "expires" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "verificationtokens_pkey" PRIMARY KEY ("identifier","token")
+    CONSTRAINT "VerificationToken_pkey" PRIMARY KEY ("identifier","token")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "sessions_sessionToken_key" ON "sessions"("sessionToken");
+CREATE UNIQUE INDEX "Session_sessionToken_key" ON "Session"("sessionToken");
 
 -- AddForeignKey
-ALTER TABLE "accounts" ADD CONSTRAINT "accounts_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "sessions" ADD CONSTRAINT "sessions_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "Session" ADD CONSTRAINT "Session_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;

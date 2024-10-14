@@ -5,7 +5,7 @@ export default <Partial<Config>>{
   theme: {
     extend: {
       fontFamily: {
-        sans: ["Lato", ...defaultTheme.fontFamily.sans]
+        sans: ["Exo", ...defaultTheme.fontFamily.sans]
       },
       colors: {
         ...defaultTheme.colors,
